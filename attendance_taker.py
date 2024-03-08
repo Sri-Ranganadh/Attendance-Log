@@ -159,10 +159,19 @@ class Face_Recognizer:
 
         if existing_entry:
             if existing_entry[4] is None:
-                # Update the OutTime in the database for the previous entry
-                prev_AttendanceID = existing_entry[0]
-                cursor.execute("UPDATE Attendance SET OutTime = ? WHERE AttendanceID= ?", (current_time, prev_AttendanceID))
-                print(f"{StudentID} marked as left for {current_date} at {current_time}")
+                # Calculate the time difference between intime and current time
+                intime = datetime.datetime.strptime(existing_entry[3], '%H:%M:%S')
+                current_time = datetime.datetime.strptime(current_time, '%H:%M:%S')
+                time_diff = (current_time - intime).total_seconds()
+                print("\n\n\ntime_diff:"+str(time_diff)+"\n\n\n")
+
+                if time_diff >= 10:
+                    # Update the OutTime in the database for the previous entry
+                    prev_AttendanceID = existing_entry[0]
+                    cursor.execute("UPDATE Attendance SET OutTime = ? WHERE AttendanceID= ?", (str(current_time).split(' ')[1], prev_AttendanceID))
+                    print(f"{StudentID} marked as left  at {current_time}")
+                else:
+                    print(f"{StudentID} left too soon, not marking out time for {current_date}")
             else:
                 if in_time:
                     cursor.execute("INSERT INTO Attendance (AttendanceID, StudentID, Date, InTime) VALUES (?, ?, ?, ?)", (AttendanceID, StudentID, current_date, current_time ))
@@ -178,6 +187,7 @@ class Face_Recognizer:
 
         conn.commit()
         conn.close()
+
 
 
 

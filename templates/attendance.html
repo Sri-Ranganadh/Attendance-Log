@@ -10,90 +10,88 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
-        form {
-            margin-top: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 1px solid #ddd;
+        .search-container {
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
             background-color: #fff;
-            width: 50%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        label {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        input[type="date"] {
-            padding: 10px 20px;
             border-radius: 5px;
-            border: none;
-            margin-bottom: 20px;
-            font-size: 18px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-top: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .input-group {
             margin-bottom: 20px;
         }
-        button[type="submit"] {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
+        .input-group-text {
+            background-color: #eee;
+            border: 1px solid #ccc;
         }
-        button[type="submit"]:hover {
-            background-color: #555;
+        .form-control {
+            border: 1px solid #ccc;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .no-data {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .go-back-btn {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="jumbotron text-center">
-        <h1 class="display-4">Attendance Tracker Sheet</h1>
-    </div>
-    <hr>
-
-    <form action="/attendance" method="POST" id="attn-form">
-        <label for="selected_date">Select Date: </label>
-        <input type="date" id="selected_date" name="selected_date" required value="{{ selected_date }}">
-        <button type="submit" class="btn btn-outline-success">Show attendance</button>
-    </form>
-
-    <div class="container mt-5">
+    <div class="container">
+        <div class="search-container">
+            <form action="/attendance" method="post" class="row align-items-end">
+                <div class="col">
+                    <label for="StudentID" class="form-label">Student ID (optional):</label>
+                    <input type="text" id="StudentID" name="StudentID" class="form-control" placeholder="Enter Student ID">
+                </div>
+                <div class="col">
+                    <label for="StartDate" class="form-label">Start Date (optional):</label>
+                    <input type="date" id="StartDate" name="StartDate" class="form-control">
+                </div>
+                <div class="col">
+                    <label for="EndDate" class="form-label">End Date (optional):</label>
+                    <input type="date" id="EndDate" name="EndDate" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Show Attendance</button>
+                </div>
+            </form>
+        </div>
         {% if no_data %}
-        <div class="alert alert-warning" role="alert">
-            No attendance data available for the selected date.
+        <div class="no-data">
+            <h2>No Data Found</h2>
+            <a href="/" class="btn btn-primary go-back-btn">Go Back to Index</a>
         </div>
         {% else %}
-        <h2>Attendance Data Table</h2>
-        <table class="table">
+        <table class="table table-striped mt-4">
             <thead>
                 <tr>
                     <th scope="col">Student ID</th>
+                    <th scope="col">Date</th>
                     <th scope="col">In Time</th>
                     <th scope="col">Out Time</th>
                 </tr>
             </thead>
             <tbody>
-                {% for student_id, in_time, out_time in attendance_data %}
+                {% for record in attendance_data %}
                 <tr>
-                    <td>{{ student_id }}</td>
-                    <td>{{ in_time }}</td>
-                    <td>{{ out_time }}</td>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <div class="text-center">
+            <a href="/" class="btn btn-primary go-back-btn">Go Back to Index</a>
+        </div>
         {% endif %}
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+z0I5t9z5lFf5r5l5u5jmpVlFq1QHoI4Ct3JFsh" crossorigin="anonymous"></script>
 </body>
 </html>
