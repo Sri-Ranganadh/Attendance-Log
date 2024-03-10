@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import sqlite3
 from datetime import datetime
 import subprocess
 import os
+from io import BytesIO
+import pandas as pd
 
+temp_attendance_data = None
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
@@ -53,6 +57,7 @@ def take_attendance():
 
 @app.route('/attendance', methods=['GET', 'POST'])
 def show_attendance():
+    global temp_attendance_data
     if request.method == 'POST':
         student_id = request.form.get('StudentID', '')
         start_date = request.form.get('StartDate', '')
@@ -88,11 +93,33 @@ def show_attendance():
 
         if not attendance_data:
             return render_template('attendance.html', no_data=True, attendance_data=[], student_id=student_id, start_date=start_date, end_date=end_date)
-        
-        return render_template('attendance.html', no_data=False, attendance_data=attendance_data, student_id=student_id, start_date=start_date, end_date=end_date)
+        else :
+            temp_attendance_data = attendance_data
+            return render_template('attendance.html', no_data=False, attendance_data=attendance_data, student_id=student_id, start_date=start_date, end_date=end_date)
     else:
         # Initial page load or navigation to /attendance without POST
         return render_template('attendance.html', no_data=False)
+
+
+
+@app.route('/download_excel')
+def download_excel():
+    global temp_attendance_data
+    if temp_attendance_data is None:
+        return "No data available", 404  # Or redirect to a different page
+
+    df = pd.DataFrame(temp_attendance_data, columns=['Student ID', 'Date', 'In Time', 'Out Time'])
+
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Sheet1', index=False)
+    output.seek(0)
+
+    # Clear the temporary data after generating the file
+    temp_attendance_data = None
+
+    return send_file(output,as_attachment=True,download_name='attendance.xlsx',mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
 
 @app.route('/train')
 def train():

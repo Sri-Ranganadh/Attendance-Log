@@ -3,4 +3,5 @@ numpy
 scikit-image
 pandas
 opencv-python
-flask
+Flask
+openpyxl
