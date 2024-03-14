@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date
 import subprocess
 import os
 from io import BytesIO
@@ -58,47 +58,56 @@ def take_attendance():
 @app.route('/attendance', methods=['GET', 'POST'])
 def show_attendance():
     global temp_attendance_data
+    student_id = ''  # Default value
+    today_str = date.today().strftime('%Y-%m-%d')  # Today's date as a string in 'YYYY-MM-DD' format
+
     if request.method == 'POST':
-        student_id = request.form.get('StudentID', '')
+        student_id = request.form.get('StudentID', '').upper()
         start_date = request.form.get('StartDate', '')
         end_date = request.form.get('EndDate', '')
-
-        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d') if start_date else None
-        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d') if end_date else None
-
-        conn = sqlite3.connect('attendance.db')
-        cursor = conn.cursor()
-
-        query = "SELECT StudentID, Date, InTime, OutTime FROM Attendance"
-        conditions = []
-        params = []
-
-        if student_id:
-            conditions.append("StudentID = ?")
-            params.append(student_id)
-        if start_date_obj and end_date_obj:
-            conditions.append("Date BETWEEN ? AND ?")
-            params.extend([start_date, end_date])
-        elif start_date_obj:
-            conditions.append("Date = ?")
-            params.append(start_date)
-
-        if conditions:
-            query += " WHERE " + " AND ".join(conditions)
-
-        cursor.execute(query, params)
-        attendance_data = cursor.fetchall()
-
-        conn.close()
-
-        if not attendance_data:
-            return render_template('attendance.html', no_data=True, attendance_data=[], student_id=student_id, start_date=start_date, end_date=end_date)
-        else :
-            temp_attendance_data = attendance_data
-            return render_template('attendance.html', no_data=False, attendance_data=attendance_data, student_id=student_id, start_date=start_date, end_date=end_date)
     else:
-        # Initial page load or navigation to /attendance without POST
-        return render_template('attendance.html', no_data=False)
+        # For GET request, show today's attendance by default
+        start_date = today_str
+        end_date = today_str
+
+    start_date_obj = datetime.strptime(start_date, '%Y-%m-%d') if start_date else None
+    end_date_obj = datetime.strptime(end_date, '%Y-%m-%d') if end_date else None
+
+    conn = sqlite3.connect('attendance.db')
+    cursor = conn.cursor()
+
+    query = "SELECT StudentID, Date, InTime, OutTime FROM Attendance"
+    conditions = []
+    params = []
+
+    if student_id:
+        conditions.append("StudentID = ?")
+        params.append(student_id)
+    if start_date_obj and end_date_obj:
+        conditions.append("Date BETWEEN ? AND ?")
+        params.extend([start_date, end_date])
+    elif start_date_obj:
+        conditions.append("Date >= ?")
+        params.append(start_date)
+    elif end_date_obj:
+        conditions.append("Date <= ?")
+        params.append(end_date)
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    cursor.execute(query, params)
+    attendance_data = cursor.fetchall()
+
+    conn.close()
+
+    if not attendance_data:
+        return render_template('attendance.html', no_data=True, attendance_data=[], student_id=student_id, start_date=start_date, end_date=end_date)
+    else:
+        temp_attendance_data = attendance_data
+        return render_template('attendance.html', no_data=False, attendance_data=attendance_data, student_id=student_id, start_date=start_date, end_date=end_date)
+
+
 
 
 
@@ -127,7 +136,7 @@ def train():
     take = os.path.join(script_dir, "features_extraction_to_csv.py")
     subprocess.run(["python", take])
     
-    return render_template('index.html')
+    return render_template('training_completed.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

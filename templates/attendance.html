@@ -46,20 +46,20 @@
             <form action="/attendance" method="post" class="row align-items-end">
                 <div class="col">
                     <label for="StudentID" class="form-label">Student ID (optional):</label>
-                    <input type="text" id="StudentID" name="StudentID" class="form-control" placeholder="Enter Student ID">
+                    <input type="text" id="StudentID" name="StudentID" class="form-control" placeholder="Enter Student ID" value="{{ student_id }}">
                 </div>
                 <div class="col">
                     <label for="StartDate" class="form-label">Start Date (optional):</label>
-                    <input type="date" id="StartDate" name="StartDate" class="form-control">
+                    <input type="date" id="StartDate" name="StartDate" class="form-control" value="{{ start_date }}">
                 </div>
                 <div class="col">
                     <label for="EndDate" class="form-label">End Date (optional):</label>
-                    <input type="date" id="EndDate" name="EndDate" class="form-control">
+                    <input type="date" id="EndDate" name="EndDate" class="form-control" value="{{ end_date }}">
                 </div>
                 <div class="col-auto">
                     <button type="submit" class="btn btn-primary">Show Attendance</button>
                 </div>
-            </form>
+            </form>            
         </div>
         {% if no_data %}
         <div class="no-data">

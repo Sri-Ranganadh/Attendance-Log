@@ -122,25 +122,23 @@ class Face_Recognizer:
 
     #  cv2 window / putText on cv2 window
     def draw_note(self, img_rd):
-        #  / Add some info on windows
         cv2.putText(img_rd, "Face Recognizer with Deep Learning", (20, 40), self.font, 1, (255, 255, 255), 1, cv2.LINE_AA)
-        cv2.putText(img_rd, "Frame:  " + str(self.frame_cnt), (20, 100), self.font, 0.8, (0, 255, 0), 1,
-                    cv2.LINE_AA)
-        cv2.putText(img_rd, "FPS:    " + str(self.fps.__round__(2)), (20, 130), self.font, 0.8, (0, 255, 0), 1,
-                    cv2.LINE_AA)
-        cv2.putText(img_rd, "Faces:  " + str(self.current_frame_face_cnt), (20, 160), self.font, 0.8, (0, 255, 0), 1,
-                    cv2.LINE_AA)
+        cv2.putText(img_rd, "Frame:  " + str(self.frame_cnt), (20, 100), self.font, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
+        cv2.putText(img_rd, "FPS:    " + str(self.fps.__round__(2)), (20, 130), self.font, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
+        cv2.putText(img_rd, "Faces:  " + str(self.current_frame_face_cnt), (20, 160), self.font, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
         cv2.putText(img_rd, "Q: Quit", (20, 450), self.font, 0.8, (255, 255, 255), 1, cv2.LINE_AA)
 
         for i in range(len(self.current_frame_face_name_list)):
             img_rd = cv2.putText(img_rd, "Face_" + str(i + 1), tuple(
                 [int(self.current_frame_face_centroid_list[i][0]), int(self.current_frame_face_centroid_list[i][1])]),
+                                self.font,
+                                0.8, (255, 190, 0),
+                                1,
+                                cv2.LINE_AA)
 
 
-                                 self.font,
-                                 0.8, (255, 190, 0),
-                                 1,
-                                 cv2.LINE_AA)
+
+
 
     # insert data in database
     def attendance(self, StudentID, current_time, in_time=True):
@@ -196,10 +194,12 @@ class Face_Recognizer:
         # 1.  Get faces known from "features.all.csv"
         if self.get_face_database():
             while stream.isOpened():
+                cv2.namedWindow("camera", cv2.WINDOW_AUTOSIZE)
                 self.frame_cnt += 1
                 logging.debug("Frame " + str(self.frame_cnt) + " starts")
                 flag, img_rd = stream.read()
                 kk = cv2.waitKey(1)
+
 
                 # 2.  Detect faces for frame X
                 faces = detector(img_rd, 0)
@@ -247,6 +247,7 @@ class Face_Recognizer:
                         img_rd = cv2.putText(img_rd, self.current_frame_face_name_list[i],
                                              self.current_frame_face_position_list[i], self.font, 0.8, (0, 255, 255), 1,
                                              cv2.LINE_AA)
+
                     self.draw_note(img_rd)
 
                 # 6.2  If cnt of faces changes, 0->1 or 1->0 or ...
@@ -322,14 +323,16 @@ class Face_Recognizer:
 
                         # 7.  / Add note on cv2 window
                         self.draw_note(img_rd)
-
                # 8.  'q'  / Press 'q' to exit
-                if kk == ord('q'):
-                    break
+                
+                
+                
 
                 self.update_fps()
-                cv2.namedWindow("camera", 1)
+                #cv2.namedWindow("camera", 1)
                 cv2.imshow("camera", img_rd)
+                if kk == ord('q') or cv2.getWindowProperty("camera", cv2.WND_PROP_AUTOSIZE) < 0 :
+                    break
 
                 logging.debug("Frame ends\n\n")
 

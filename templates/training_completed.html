@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn-container a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-container a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body >
+
+    <div class="container">
+        <h1>Lab Register Management</h1>
+        <div class="btn-container">
+            <a href="/register" class="btn">Register Students</a>
+            <a href="/train" class="btn">Train the Algorithm</a>
+        </div>
+        <div class="btn-container">
+            <a href="/take_attendance" class="btn">Start Log</a>
+            <a href="/attendance" class="btn">Show Log</a>
+        </div>
+    </div>
+    <script>
+        // Display alert box when the page is loaded
+        window.onload = function() {
+            alert("Training Completed!");
+        };
+    </script>
+</body>
+</html>

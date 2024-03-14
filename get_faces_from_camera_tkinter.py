@@ -1,4 +1,3 @@
-
 import dlib
 import numpy as np
 import cv2
@@ -10,6 +9,8 @@ import tkinter as tk
 from tkinter import font as tkFont
 from PIL import Image, ImageTk
 import sys
+import subprocess
+
 
 # Use frontal face detector of Dlib
 detector = dlib.get_frontal_face_detector()
@@ -72,6 +73,14 @@ class Face_Register:
 
         self.cap = cv2.VideoCapture(0)  # Get video stream from camera
 
+        self.win.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        message_script = os.path.join(script_dir, "message.py")
+        subprocess.run(["python", message_script, "Registered Successfully"])
+        self.win.destroy()
+
     def GUI_info(self):
         tk.Label(self.frame_right_info,
                  text="Face register",
@@ -87,10 +96,10 @@ class Face_Register:
                  text="Faces in current frame: ").grid(row=3, column=0, columnspan=2, sticky=tk.W, padx=5, pady=2)
         self.label_face_cnt.grid(row=3, column=2, columnspan=3, sticky=tk.W, padx=5, pady=2)
 
-        # Step 2: Save current face in frame
+        # Save current face in frame
         tk.Label(self.frame_right_info,
                  font=self.font_step_title,
-                 text="Step 2: Save face image").grid(row=9, column=0, columnspan=2, sticky=tk.W, padx=5, pady=20)
+                 text="Save face Image").grid(row=9, column=0, columnspan=2, sticky=tk.W, padx=5, pady=20)
 
         tk.Button(self.frame_right_info,
                   text='Save current face',

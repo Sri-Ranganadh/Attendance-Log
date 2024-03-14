@@ -99,6 +99,33 @@ form .text h3 a{
 form .text h3 a:hover{
   text-decoration: underline;
 }
+.one
+{
+  background: #0e4bf1;
+  width: 100%;
+  height:52px;
+  letter-spacing: 1px;
+  border: none;
+  background: #4070f4;
+  cursor: pointer;
+  outline: none;
+  padding:14px 35% 14px 40%;
+  font-size: 17px;
+  font-weight: 400;
+  border: 1.5px;
+  border-bottom-width: 2.5px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.one a
+{
+  text-decoration: none;
+  color:#fff;
+}
+.one:hover{
+  background: #0e4bf1;
+}
+
     </style>
   <script>
     function showAlertAndRedirect() {
@@ -126,11 +153,12 @@ form .text h3 a:hover{
       <div class="input-box button">
         <input type="Submit" value="Register Now">
       </div>
-      <div class="input-box button">
-        <input  value="Go Back" style="text-align: center;" onclick="window.location.href = 'index.html';">
+      <div class="one">
+        <a href="/">
+          Go Back
+        </a>
       </div>
     </form>
-    
   </div>
 </body>
 </html>
